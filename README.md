@@ -24,8 +24,27 @@ You'll need some things - you've probably got them but let's make sure:
     - dbaeumer.vscode-eslint
     - dotnet related extensions
 
+Pre-reqs can be installed using [chocolatey](https://www.chocolatey.org/) on windows
+```
+cinst -y nodejs yarn docker-desktop git vscode
+```
 
-Clone this project and run
+or [homebrew](https://brew.sh/) on macOS
+```
+brew update
+brew tap caskroom/cask
+brew install node git yarn
+brew cask install docker visual-studio-code
+```
+
+or apt-get on Linux (Debian/Ubuntu)
+```
+sudo apt-get install -y git nodejs yarn
+sudo snap install --classic code docker
+```
+
+
+Once we have the prereqs now run:
 
 ```
 git clone https://github.com/oceanswave/stomp-dotnet-poc
@@ -72,6 +91,8 @@ Structure:
 The client code needs some love, some locking code, documentation but it's a PoC. There's some scripts in the main package.json to build "production" images but... YAGNI.
 
 Although this is STOMP over Websockets, it could be that STOMP over regular 'ol TCP is what's needed - creating another implementation of IStompClient that uses System.Net.TcpClient shouldn't be too bad.
+
+Looking at the logs is the best way to see messages flowing, however one can debug the dotnet client as well as the web client through normal mechanisms.
 
 # Troubleshooting
 
