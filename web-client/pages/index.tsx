@@ -35,7 +35,7 @@ export default function Home() {
     let subscription: StompSubscription;
     client.onConnect = (frame) => {
       console.log('%c connected!!', 'background: green; color: white; display: block;');
-      subscription = client.subscribe("/queue/hello-from-dot-net", (message) => {
+      subscription = client.subscribe("/topic/hello-from-dot-net", (message) => {
         console.log(`%c Dotnet says: ${message.body}`, 'background: green; color: white; display: block;');
       });
     };
@@ -54,7 +54,7 @@ export default function Home() {
   });
 
   const sendMessage = (body) => {
-    client?.publish({ destination: '/topic/all', body: body });
+    client?.publish({ destination: '/topic/hello-from-next-js', body: body });
   }
 
   return (

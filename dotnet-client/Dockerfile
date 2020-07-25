@@ -1,4 +1,4 @@
-FROM dotnet/core/sdk as build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine as build
 
 WORKDIR /app
 COPY *.csproj .
@@ -7,7 +7,7 @@ RUN dotnet restore
 COPY . .
 RUN dotnet publish -c Release -o out
 
-FROM dotnet/core/aspnet
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine
 WORKDIR /app
 COPY --from=build /app/out .
 ENTRYPOINT ["dotnet", "dotnet-core-client.dll"]

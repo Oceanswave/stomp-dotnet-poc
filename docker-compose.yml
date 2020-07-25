@@ -12,17 +12,17 @@ services:
     networks:
       - frontend
       - backend
-  # dotnet-client:
-  #   image: stomp-poc/dotnet-core-client
-  #   build:
-  #     context: ./dotnet-core-client
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   depends_on:
-  #     - rabbitmq
-  #   networks:
-  #     - frontend
-  #     - backend
+  dotnet-client:
+    image: stomp-poc/dotnet-client
+    build:
+      context: ./dotnet-client
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - rabbitmq
+    networks:
+      - frontend
+      - backend
   rabbitmq:
     image: stomp-dotnet-poc/rabbitmq
     build:

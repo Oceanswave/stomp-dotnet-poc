@@ -1,7 +1,6 @@
 # STOMP dotnet core PoC
 
-This proof-of-concept runs a number of containers to demonstrate dotnet core connecting to a rabbitmq instance
-that has the STOMP plugin enabled.
+This proof-of-concept runs a number of containers in order to demonstrate a web client and dotnet core connecting to a rabbitmq instance using the STOM over web sockets protocol and sending messages to one another.
 
 Containers:
 
@@ -26,18 +25,43 @@ You'll need some things - you've probably got them but let's make sure:
     - dotnet related extensions
 
 
-Clone this project and run ```yarn dev``` in the folder to build and bring up the stack.
+Clone this project and run
+
+```
+yarn install
+yarn dev
+```
+
+in the folder to build and bring up the stack.
 
 At this point, you can also run ```yarn logs``` to tail the docker logs.
 
 # PoC
 
-Open a browser to localhost:8080. the page will load, establish a STOMP connection to RabbitMQ. You'll see 'ping/pong' messages in the console-feed powered log.
+Give it a couple seconds and then open a browser to localhost:8080. a landing page will load, establish a STOMP-over-websockets connection to RabbitMQ. You'll see 'ping/pong' debug messages in the [console-feed](https://github.com/samdenty/console-feed) powered log.
 
-Enter a message into the textbox and it will send a message to all subscribers of the 'all' topic.
-In this way you can use pub/sub with clients subscribed to topics and queues.
+Every 2 seconds you'll see a message from the dotnet client in green
 
-But I digress, what we're interested in (I think) is listening and sending STOMP messages from dotnet.
+Enter a message into the textbox and it will send a message to the dotnet client which is subscribing to /topics/hello-from-next-js
 
-aaaand... here.
+This shows that the RabbitMQ server is operational with STOMP
 
+Every so often you'll see a message with a green background - that's the .Net Core Client publishing out a message.
+
+All the source is available and 
+
+# Debugging/Development
+
+The RabbitMQ Management page is available at http://localhost:8080/rabbitmq to see the current connections/messages in the queue and so forth.
+guest/guest is the username and password (RabbitMQ defaults)
+
+
+Structure:
+ - dotnet-client - Contains the dotnet core code to create a simple client that talks STOMP 
+ - web-client - Contains the code hosted at localhost:8080
+ - rabbitmq - Just contains a dockerfile to set rabbitmq up
+ - nginx - just contains a dockerfile for nginx, as well as configuration files for reverse proxying.
+
+# Shuting down
+
+To stop the containers, simply run ```yarn down``` and you can go on your merry way.
