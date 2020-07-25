@@ -48,7 +48,7 @@ This shows that the RabbitMQ server is operational with STOMP
 
 Every so often you'll see a message with a green background - that's the .Net Core Client publishing out a message.
 
-All the source is available and 
+The dotnet client is just a console app - all the source is available at ./dotnet-client.
 
 # Debugging/Development
 
@@ -68,4 +68,4 @@ If localhost:8080 isn't functioning, and you're on windows, git for windows has 
 
 # Shuting down
 
-To stop the containers, simply run ```yarn down``` and you can go on your merry way.
+To stop the environment, simply run ```yarn down``` and you can go on your merry way.
