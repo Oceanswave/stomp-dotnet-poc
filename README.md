@@ -28,6 +28,7 @@ You'll need some things - you've probably got them but let's make sure:
 Clone this project and run
 
 ```
+git clone https://github.com/oceanswave/stomp-dotnet-poc
 yarn install
 yarn dev
 ```
