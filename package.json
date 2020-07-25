@@ -11,7 +11,7 @@
         "dev:down": "yarn dev:command down",
         "dev:restart": "yarn dev:command restart",
         "dev:run": "yarn dev:command run",
-        "dev:clean-web-client": " docker volume rm spdr-n-jam-stack_spdr_app_node_modules",
+        "dev:clean-web-client": "docker volume rm stomp_poc_node_modules",
         "dev:clean": "run-s dev:clean-**",
         "dev:logs": "yarn dev:command logs -f",
 
