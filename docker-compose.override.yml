@@ -14,6 +14,7 @@ services:
     ports:
       - 5672:5672 # RabbitMQ Port
       - 15672:15672 # RabbitMQ Management Port
+      - 15674:15674 # Stomp Web Sockets Port
       - 61613:61613 # Stomp Port
   nginx:
     build:

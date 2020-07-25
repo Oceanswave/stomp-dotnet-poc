@@ -4,89 +4,106 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using System.Threading.Tasks;
     using WebSocketSharp;
 
+    /// <summary>
+    /// Represents a Stomp client that uses websockets as the transport layer negotation protocol.
+    /// </summary>
     public class StompWebsocketClient : IStompClient
     {
-        public event EventHandler OnOpen;
-        public event EventHandler<CloseEventArgs> OnClose;
-        public event EventHandler<ErrorEventArgs> OnError;
+        public event EventHandler<StompFrame> OnConnected;
+        public event EventHandler<string> OnDisconnected;
+        public event EventHandler<string> OnError;
 
-        private readonly Uri _brokerUri;
         private readonly WebSocket _socket;
         private readonly StompMessageSerializer _stompSerializer = new StompMessageSerializer();
 
         private readonly IDictionary<string, Subscriber> subscribers = new Dictionary<string, Subscriber>();
 
-        public StompConnectionState State { get; private set; } = StompConnectionState.Closed;
-
         public StompWebsocketClient(Uri brokerUri)
         {
-            _brokerUri = brokerUri;
             _socket = new WebSocket(brokerUri.ToString());
         }
 
-        public void Connect(IDictionary<string, string> headers)
+        public StompConnectionStatus State { get; private set; } = StompConnectionStatus.NeverConnected;
+
+        public Task Connect(IDictionary<string, string> headers)
         {
-            if (State != StompConnectionState.Closed)
+            if (State != StompConnectionStatus.NeverConnected && State != StompConnectionStatus.DisconnectedByHost && State != StompConnectionStatus.DisconnectedByUser)
                 throw new InvalidOperationException("The current state of the connection is not Closed.");
 
+            State = StompConnectionStatus.Connecting;
             _socket.Connect();
 
-            var connectMessage = new StompMessage(StompCommand.Connect, headers);
+            var connectMessage = new StompFrame(StompFrameKind.Connect, headers);
             _socket.Send(_stompSerializer.Serialize(connectMessage));
 
             _socket.OnMessage += HandleMessage;
-            _socket.OnError += OnError;
-            _socket.OnClose += OnClose;
-            _socket.OnOpen += OnOpen;
+            _socket.OnError += (object sender, ErrorEventArgs e) =>
+            {
+                State = StompConnectionStatus.Error;
+                OnError?.Invoke(this, e.Message);
+            };
 
-            State = StompConnectionState.Open;
+            _socket.OnClose += (object sender, CloseEventArgs e) =>
+            {
+                State = StompConnectionStatus.DisconnectedByHost;
+                OnDisconnected?.Invoke(this, e.Reason);
+            };
+
+            _socket.OnOpen += (object sender, EventArgs e) =>
+            {
+                State = StompConnectionStatus.Connected;
+                OnConnected?.Invoke(this, null);
+            };
+
+            State = StompConnectionStatus.Connected;
+            return Task.CompletedTask;
         }
 
-        public void Send(object body, string destination, IDictionary<string, string> headers)
+        public Task Send<T>(T body, string destination, IDictionary<string, string> headers)
         {
-            if (State != StompConnectionState.Open)
-                throw new InvalidOperationException("The current state of the connection is not Open.");
+            if (State != StompConnectionStatus.Connected)
+                throw new InvalidOperationException("The stomp client is not connected.");
 
             var jsonPayload = JsonConvert.SerializeObject(body);
             headers.Add("destination", destination);
             headers.Add("content-type", "application/json;charset=UTF-8");
             headers.Add("content-length", Encoding.UTF8.GetByteCount(jsonPayload).ToString());
-            var connectMessage = new StompMessage(StompCommand.Send, jsonPayload, headers);
+            var connectMessage = new StompFrame(StompFrameKind.Send, jsonPayload, headers);
             _socket.Send(_stompSerializer.Serialize(connectMessage));
+            return Task.CompletedTask;
         }
 
-        public void Subscribe<T>(string topic, IDictionary<string, string> headers, EventHandler<T> handler)
+        public Task Subscribe<T>(string topic, IDictionary<string, string> headers, EventHandler<T> handler)
         {
-            if (State != StompConnectionState.Open)
-                throw new InvalidOperationException("The current state of the connection is not Open.");
+            if (State != StompConnectionStatus.Connected)
+                throw new InvalidOperationException("The stomp client is not connected.");
 
             headers.Add("destination", topic);
             headers.Add("id", "stub"); // todo: study and implement
-            var subscribeMessage = new StompMessage(StompCommand.Subscribe, headers);
+            var subscribeMessage = new StompFrame(StompFrameKind.Subscribe, headers);
             _socket.Send(_stompSerializer.Serialize(subscribeMessage));
-            // todo: check response
-            // todo: implement advanced topic
+
             var sub = new Subscriber((sender, body) => handler(this, (T)body), typeof(T));
             subscribers.Add(topic, sub);
+            return Task.CompletedTask;
         }
 
         public void Dispose()
         {
-            if (State != StompConnectionState.Open)
-                throw new InvalidOperationException("The current state of the connection is not Open.");
+            //TODO: Send DISCONNECT frame.
 
             _socket.Close();
-            State = StompConnectionState.Closed;
+            State = StompConnectionStatus.DisconnectedByUser;
             ((IDisposable)_socket).Dispose();
-            // todo: unsubscribe
         }
 
         private void HandleMessage(object sender, MessageEventArgs messageEventArgs)
         {
             var message = _stompSerializer.Deserialize(messageEventArgs.Data);
-            if (message.Command == StompCommand.Message)
+            if (message.FrameKind == StompFrameKind.Message)
             {
                 var key = message.Headers["destination"];
 

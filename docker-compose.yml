@@ -17,6 +17,7 @@ services:
     build:
       context: ./dotnet-client
       dockerfile: Dockerfile
+    stdin_open: true
     restart: always
     depends_on:
       - rabbitmq

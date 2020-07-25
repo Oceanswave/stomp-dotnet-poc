@@ -4,13 +4,21 @@
     using System.IO;
     using System.Text;
 
+    /// <summary>
+    /// Represents a serializer that serializes/deserializes a StompFrame to/from a over-the-wire representation.
+    /// </summary>
     public class StompMessageSerializer
     {
-        public string Serialize(StompMessage message)
+        /// <summary>
+        /// Serializes the frame into a STOMP protocol compatible string.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public string Serialize(StompFrame message)
         {
             var buffer = new StringBuilder();
 
-            buffer.Append(message.Command + "\n");
+            buffer.Append(message.FrameKind + "\n");
 
             if (message.Headers != null)
             {
@@ -27,7 +35,12 @@
             return buffer.ToString();
         }
 
-        public StompMessage Deserialize(string message)
+        /// <summary>
+        /// Deserializes the STOMP frame into a StompFrame object.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public StompFrame Deserialize(string message)
         {
             var reader = new StringReader(message);
 
@@ -46,7 +59,7 @@
             var body = reader.ReadToEnd();
             body = body.TrimEnd('\r', '\n', '\0');
 
-            return new StompMessage(command, body, headers);
+            return new StompFrame(command, body, headers);
         }
     }
 }

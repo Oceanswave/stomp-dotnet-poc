@@ -2,6 +2,9 @@
 {
     using System;
 
+    /// <summary>
+    /// Represents a subscription to a destination.
+    /// </summary>
     public class Subscriber
     {
         public EventHandler<object> Handler { get; }

@@ -90,9 +90,19 @@ Structure:
 
 The client code needs some love, some locking code, documentation but it's a PoC. There's some scripts in the main package.json to build "production" images but... YAGNI.
 
-Although this is STOMP over Websockets, it could be that STOMP over regular 'ol TCP is what's needed - creating another implementation of IStompClient that uses System.Net.TcpClient shouldn't be too bad.
-
 Looking at the logs is the best way to see messages flowing, however one can debug the dotnet client as well as the web client through normal mechanisms.
+
+To run the dotnet console app locally, change the hostname to be localhost:
+Change line 15 of Program.cs to be ```private const string BrokerHost = "localhost";```
+
+
+To change to using a straight TCP client, change line 15 and 16 of Program.cs to
+```
+private const string BrokerHost = "localhost";
+private const int BrokerPort = 61613;
+```
+
+Then comment out line 23, and then uncomment line 24.
 
 # Troubleshooting
 
