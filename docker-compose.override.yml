@@ -1,0 +1,29 @@
+version: "3.4"
+
+services:
+  web-client:
+    build:
+      context: ./web-client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - './web-client:/srv/app'
+      - 'stomp_poc_node_modules:/srv/app/node_modules'
+    ports:
+      - 3000:3000
+  rabbitmq:
+    ports:
+      - 5672:5672 # RabbitMQ Port
+      - 15672:15672 # RabbitMQ Management Port
+      - 61613:61613 # Stomp Port
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.dev
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/api_conf.d:/etc/nginx/api_conf.d
+  
+volumes:
+  'stomp_poc_node_modules':

@@ -1,0 +1,58 @@
+version: "3.4"
+
+services:
+  web-client:
+    image: stomp-dotnet-poc/web-client
+    build:
+      context: ./web-client
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - rabbitmq
+    networks:
+      - frontend
+      - backend
+  # dotnet-client:
+  #   image: stomp-poc/dotnet-core-client
+  #   build:
+  #     context: ./dotnet-core-client
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   depends_on:
+  #     - rabbitmq
+  #   networks:
+  #     - frontend
+  #     - backend
+  rabbitmq:
+    image: stomp-dotnet-poc/rabbitmq
+    build:
+      context: ./rabbitmq
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - backend
+  nginx: 
+    image: stomp-dotnet-poc/nginx
+    build:
+        context: ./nginx
+        dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8080:80
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - web-client
+      - rabbitmq
+  watchtower:
+    image: containrrr/watchtower
+    container_name: stomp_dotnet_poc_watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  frontend:
+  backend:
+
