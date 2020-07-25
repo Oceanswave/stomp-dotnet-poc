@@ -29,33 +29,39 @@ Clone this project and run
 
 ```
 git clone https://github.com/oceanswave/stomp-dotnet-poc
+cd stomp-dotnet-poc
 yarn install
 yarn dev
 ```
 
 in the folder to build and bring up the stack.
 
-At this point, you can also run ```yarn logs``` to tail the docker logs.
+![Yay, we have a running environment!](https://github.com/Oceanswave/stomp-dotnet-poc/blob/master/images/readme-1.png?raw=true)
 
 # PoC
 
 Give it a couple seconds and then open a browser to localhost:8080. a landing page will load, establish a STOMP-over-websockets connection to RabbitMQ. You'll see 'ping/pong' debug messages in the [console-feed](https://github.com/samdenty/console-feed) powered log.
 
-Every 2 seconds you'll see a message from the dotnet client in green
+Every so often you'll see a message with a green background - that's the .Net Core Client publishing out a message.
+
+![dotnet is talking to us, wicked](https://github.com/Oceanswave/stomp-dotnet-poc/blob/master/images/readme-2.png?raw=true)
 
 Enter a message into the textbox and it will send a message to the dotnet client which is subscribing to /topics/hello-from-next-js
 
-This shows that the RabbitMQ server is operational with STOMP
+We can see the messages being received by the dotnet client by running ```yarn logs dotnet-client```
 
-Every so often you'll see a message with a green background - that's the .Net Core Client publishing out a message.
+![and we're talking back!](https://github.com/Oceanswave/stomp-dotnet-poc/blob/master/images/readme-3.png?raw=true)
 
-The dotnet client is just a console app - all the source is available at ./dotnet-client.
+At this point, you can also run ```yarn logs``` to tail the logs from all the running containers.
+
+The dotnet client is just a console app with a custom STOMP client - all the source is available at ./dotnet-client.
 
 # Debugging/Development
 
 The RabbitMQ Management page is available at http://localhost:8080/rabbitmq to see the current connections/messages in the queue and so forth.
 guest/guest is the username and password (RabbitMQ defaults)
 
+![the RabbitMQ management page is function over form here, ladies and gents](https://github.com/Oceanswave/stomp-dotnet-poc/blob/master/images/readme-4.png?raw=true)
 
 Structure:
  - dotnet-client - Contains the dotnet core code to create a simple client that talks STOMP 
@@ -63,9 +69,13 @@ Structure:
  - rabbitmq - Just contains a dockerfile to set rabbitmq up
  - nginx - just contains a dockerfile for nginx, as well as configuration files for reverse proxying.
 
+The client code needs some love, but it's a PoC, there's some scripts to build "production" images but... YAGNI.
+
 # Troubleshooting
 
 If localhost:8080 isn't functioning, and you're on windows, git for windows has a penchant for changing LF to CRLF - ensure that the .sh files within the /web-client folder haven't been flipped over *sigh*
+
+looking at the logs helps too.
 
 # Shuting down
 
