@@ -62,6 +62,10 @@ Structure:
  - rabbitmq - Just contains a dockerfile to set rabbitmq up
  - nginx - just contains a dockerfile for nginx, as well as configuration files for reverse proxying.
 
+# Troubleshooting
+
+If localhost:8080 isn't functioning, and you're on windows, git for windows has a penchant for changing LF to CRLF - ensure that the .sh files within the /web-client folder haven't been flipped over *sigh*
+
 # Shuting down
 
 To stop the containers, simply run ```yarn down``` and you can go on your merry way.
