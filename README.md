@@ -69,7 +69,9 @@ Structure:
  - rabbitmq - Just contains a dockerfile to set rabbitmq up
  - nginx - just contains a dockerfile for nginx, as well as configuration files for reverse proxying.
 
-The client code needs some love, but it's a PoC, there's some scripts to build "production" images but... YAGNI.
+The client code needs some love, some locking code, documentation but it's a PoC. There's some scripts in the main package.json to build "production" images but... YAGNI.
+
+Although this is STOMP over Websockets, it could be that STOMP over regular 'ol TCP is what's needed - creating another implementation of IStompClient that uses System.Net.TcpClient shouldn't be too bad.
 
 # Troubleshooting
 
