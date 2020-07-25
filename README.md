@@ -98,6 +98,10 @@ Looking at the logs is the best way to see messages flowing, however one can deb
 
 If localhost:8080 isn't functioning, and you're on windows, git for windows has a penchant for changing LF to CRLF - ensure that the .sh files within the /web-client folder haven't been flipped over *sigh*
 
+```
+git config --global core.autocrlf false
+```
+
 looking at the logs helps too.
 
 # Shuting down
