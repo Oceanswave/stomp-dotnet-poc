@@ -6,7 +6,7 @@ Containers:
 
 - RabbitMQ with rabbitmq_stomp rabbitmq_web_stomp as well as the the management plugin enabled 
 - Web Client - A NextJS+Typescript web-client that uses [@stomp/stompjs](https://github.com/stomp-js/stompjs) to send/recieve messages to/from RabbitMQ using STOMP over websockets
-- dotnet-core-client - Implements a STOMP over websockets client that sends and responds to messages.
+- dotnet-core-client - Implements a STOMP over websockets client that sends and responds to messages. There's a TCP client too! (This is PoC level code, not for prod, but feel free to modify!)
 - nginx - Reverse Proxy for the web client and RabbitMQ (websocket, management) ports.
 
 # Getting Started
