@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 yarn build
 yarn start
