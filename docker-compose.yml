@@ -13,7 +13,7 @@ services:
       - frontend
       - backend
   dotnet-client:
-    image: stomp-poc/dotnet-client
+    image: stomp-dotnet-poc/dotnet-client
     build:
       context: ./dotnet-client
       dockerfile: Dockerfile
