@@ -1,6 +1,6 @@
 # STOMP dotnet core PoC
 
-This proof-of-concept runs a number of containers in order to demonstrate a web client and dotnet core client connecting to a rabbitmq instance using the STOMP over web sockets protocol and sending messages to one another.
+This proof-of-concept runs a number of containers in order to demonstrate a react-based web client as well as a dotnet core client connecting to a rabbitmq instance which acts a message broker. The clients utilize the the STOMP over web sockets protocol to transmit and recieve messages between one another via the broker.
 
 Containers:
 
