@@ -12,4 +12,4 @@ yarn global add nodemon
 yarn install
 
 echo "Starting your app..."
-nodemon -w yarn.lock --delay 10 --exec "yarn && $@"
+nodemon -w package.json --delay 10 --exec "yarn && $@"
