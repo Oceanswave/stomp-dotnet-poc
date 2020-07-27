@@ -15,7 +15,7 @@
         "dev:clean": "run-s dev:clean-**",
         "dev:logs": "yarn dev:command logs -f",
 
-        "prod:command": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml", 
+        "prod:command": "docker-compose -f docker-compose.yml", 
         "prod:build": "yarn prod:command build",
         "prod:up": "yarn prod:command up -d",
         

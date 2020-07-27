@@ -1,12 +1,12 @@
 # STOMP dotnet core PoC
 
-This proof-of-concept runs a number of containers in order to demonstrate a web client and dotnet core client connecting to a rabbitmq instance using the STOMP over web sockets protocol and sending messages to one another.
+This proof-of-concept runs a number of containers in order to demonstrate a react-based web client as well as a dotnet core client connecting to a rabbitmq instance which acts a message broker. The clients utilize the the STOMP over web sockets protocol to transmit and recieve messages between one another via the broker.
 
 Containers:
 
 - RabbitMQ with rabbitmq_stomp rabbitmq_web_stomp as well as the the management plugin enabled 
 - Web Client - A NextJS+Typescript web-client that uses [@stomp/stompjs](https://github.com/stomp-js/stompjs) to send/recieve messages to/from RabbitMQ using STOMP over websockets
-- dotnet-core-client - Implements a STOMP over websockets client that sends and responds to messages.
+- dotnet-core-client - Implements a STOMP over websockets client that sends and responds to messages. There's a TCP client too! (This is PoC level code, not for prod, but feel free to modify!)
 - nginx - Reverse Proxy for the web client and RabbitMQ (websocket, management) ports.
 
 # Getting Started

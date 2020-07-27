@@ -13,7 +13,7 @@ services:
       - frontend
       - backend
   dotnet-client:
-    image: stomp-poc/dotnet-client
+    image: stomp-dotnet-poc/dotnet-client
     build:
       context: ./dotnet-client
       dockerfile: Dockerfile
@@ -46,12 +46,6 @@ services:
     depends_on:
       - web-client
       - rabbitmq
-  watchtower:
-    image: containrrr/watchtower
-    container_name: stomp_dotnet_poc_watchtower
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   frontend:
