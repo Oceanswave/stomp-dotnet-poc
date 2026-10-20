@@ -14,11 +14,9 @@
         "dev:clean-web-client": "docker volume rm stomp_poc_node_modules",
         "dev:clean": "run-s dev:clean-**",
         "dev:logs": "yarn dev:command logs -f",
-
-        "prod:command": "docker-compose -f docker-compose.yml", 
+        "prod:command": "docker-compose -f docker-compose.yml",
         "prod:build": "yarn prod:command build",
         "prod:up": "yarn prod:command up -d",
-        
         "start": "yarn dev",
         "stop": "yarn dev:down",
         "dev": "run-s dev:build dev:up",
@@ -28,7 +26,6 @@
         "restart": "yarn dev:restart",
         "clean": "yarn dev:clean",
         "logs": "yarn dev:logs",
-
         "prod": "run-s prod:build prod:up"
     },
     "devDependencies": {
