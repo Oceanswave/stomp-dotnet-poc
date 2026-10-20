@@ -117,3 +117,34 @@ looking at the logs helps too.
 # Shuting down
 
 To stop the environment, simply run ```yarn down``` and you can go on your merry way.
+
+## CI validation
+
+Pull requests and pushes to master run the frozen Yarn workspace install,
+web TypeScript check, full Next production build on Node 24, and a separate
+.NET client restore/build on SDK 10. No application, broker or container is
+started. The existing netcoreapp3.1 target's EOL/advisory warnings remain
+visible; compilation does not prove broker interoperability or migrate the
+runtime to a supported target.
+
+For the Next 11 update, React and ReactDOM use the required 17.0.2 peer
+versions, with console-feed 3.2.2 for its React 17 peer support. The documented `webpack5: false` compatibility backend uses SHA256
+output hashing and disables the old Babel disk cache and scope-hoisting
+optimization to avoid native MD4. Typechecking, minification and the full
+production build remain enabled; bundle size/performance may differ without
+scope hoisting. No legacy OpenSSL provider is enabled. See the [Next.js migration notes](https://nextjs.org/docs/messages/webpack5).
+
+The Next 11 compatibility build replaces only its JS minimizer with the
+Webpack-4-compatible public terser-webpack-plugin 4.2.3 and cache:false.
+The matching Webpack 4.47 peer is a direct build dependency; Next still uses
+its documented bundled Webpack 4 backend. Next's Terser options, parallelism
+and comment behavior are preserved, and its CSS/other minimizers remain.
+JavaScript minification stays enabled; this avoids only the old native-MD4
+cache implementation.
+
+Next 11.1.3's polyfill copy plugin uses a documented SHA256 filename
+interpolation instead of its native-MD4 default, with its source and asset
+metadata preserved. An offline compiler regression verifies executable
+minified output and preservation of the other minimizers; a post-build
+check verifies the emitted polyfill digest and generated HTML reference.
+These options are specific to the pinned Next 11.1.3 build.
