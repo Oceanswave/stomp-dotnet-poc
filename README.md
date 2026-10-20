@@ -117,3 +117,19 @@ looking at the logs helps too.
 # Shuting down
 
 To stop the environment, simply run ```yarn down``` and you can go on your merry way.
+
+## CI validation
+
+Pull requests and pushes to master build both clients without starting the
+application, RabbitMQ, Docker containers, or a broker connection. The web job
+uses Node.js 24 and Yarn 1.22.22, a frozen root workspace lockfile, TypeScript
+checking, and the existing Next.js production build. Webpack is pinned to
+4.47.0 through a Yarn resolution for modern Node compatibility; no legacy
+OpenSSL provider flag is required. The bundled Next 9 Babel disk cache is disabled
+because it independently uses native MD4; transpilation and production
+optimization still run.
+
+The .NET job uses SDK 10 to restore and compile the existing netcoreapp3.1
+target. The target's end-of-support and dependency-advisory warnings remain
+visible. Successful compilation is not a supported-runtime migration or
+proof of broker interoperability; those remain separate work.
