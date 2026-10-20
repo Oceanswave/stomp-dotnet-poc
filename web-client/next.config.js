@@ -1,8 +1,10 @@
+const BuildValidationPlugin = require('./build-validation-plugin');
+
 module.exports = {
-  webpack(config, { defaultLoaders }) {
-    // Next 9's bundled Babel cache hashes with native MD4, unavailable on modern Node.
-    // Compile normally without that disk cache rather than enabling legacy OpenSSL.
-    defaultLoaders.babel.options.cache = false;
+  webpack(config, { dev, isServer }) {
+    if (!dev && !isServer && process.env.BUILD_VALIDATION === '1') {
+      config.plugins.push(new BuildValidationPlugin());
+    }
     return config;
   },
 };

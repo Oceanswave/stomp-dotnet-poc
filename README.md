@@ -16,7 +16,7 @@ You'll need some things - you've probably got them but let's make sure:
  - Git - Well, yeah
  - Docker - Containers, baby! If you're on windows, ensure you're in docker linux container mode.
  - VSCode - or your editor of choice
- - NodeJS > v12 - Ubiquitous
+ - NodeJS >=20.9 (Node 24 is used in CI and the web Dockerfiles)
  - Yarn - We're using Yarn workspaces to minimize footprint
     Some recommended extensions:
     - ms-azuretools.vscode-docker
@@ -120,16 +120,43 @@ To stop the environment, simply run ```yarn down``` and you can go on your merry
 
 ## CI validation
 
-Pull requests and pushes to master build both clients without starting the
-application, RabbitMQ, Docker containers, or a broker connection. The web job
-uses Node.js 24 and Yarn 1.22.22, a frozen root workspace lockfile, TypeScript
-checking, and the existing Next.js production build. Webpack is pinned to
-4.47.0 through a Yarn resolution for modern Node compatibility; no legacy
-OpenSSL provider flag is required. The bundled Next 9 Babel disk cache is disabled
-because it independently uses native MD4; transpilation and production
-optimization still run.
+Pull requests and pushes to master run a frozen Yarn workspace install,
+Next route type generation and TypeScript checking, bounded offline
+regressions for both Babel runtime and bundled compiler replacement helpers,
+an executable native SWC minification probe, and the full optimized Next
+production build on Node 24 using the documented `--webpack` mode.
+`BUILD_VALIDATION=1` adds only a compilation audit: post-build tests verify
+that actual client JavaScript assets were minimized, compare their SHA256
+content digests, and verify the emitted polyfill and rendered HTML reference.
+Next's native compiler/minimizer remains unchanged. The separate .NET job
+restores/builds with SDK 10; the netcoreapp3.1 EOL warning remains visible.
+No application, broker or container is started by CI.
 
-The .NET job uses SDK 10 to restore and compile the existing netcoreapp3.1
-target. The target's end-of-support and dependency-advisory warnings remain
-visible. Successful compilation is not a supported-runtime migration or
-proof of broker interoperability; those remain separate work.
+The supported Next 16.4.2 Pages Router retains the existing page, STOMP topics
+and logging UI on React 18.3.1. Node 20.9+ and TypeScript 5.1+ are required; the
+web Dockerfiles use Node 24. Modern framework browser requirements apply
+(Chrome/Edge 111+, Firefox 111+, Safari 16.4+). React 18 support in Next 16 is
+deprecated and will be removed in Next 17; this change does not move to
+React 19 or the App Router. Console-feed 3.8 declares React 18 support, while
+its react-inspector 5 transitive peer still lists React 16/17. That upstream
+warning remains visible; no invalid dependency override or warning
+suppression is used.
+
+Next 11.1.4 retains the affected Babel runtime 7.15.3 and bundled compiler 7.15.0
+for [GHSA-968p-4wvh-cqc8](https://github.com/advisories/GHSA-968p-4wvh-cqc8).
+Official Next 16.4.2 bundles patched Babel core 7.26.10 and runtime 7.27.0;
+remaining external runtime ranges resolve patched 7.29.10 within their
+existing compatible constraints. Both actual helper paths have bounded
+regression coverage. No vendor patch, forced override, legacy OpenSSL
+provider or skipped minification/build is used.
+
+Next 15.5.28 also contains patched helpers and supports this Pages Router
+with React 18, but the [support policy](https://nextjs.org/support-policy)
+places its normal two-year maintenance boundary at October 21, 2026.
+Next 16 is the Active LTS path selected to avoid another immediate migration.
+See the documented [Next 16 upgrade](https://nextjs.org/docs/pages/guides/upgrading/version-16)
+and [route type generation](https://nextjs.org/docs/pages/api-reference/cli/next#next-typegen-options).
+
+Offline browser validation uses intercepted production assets and a mocked
+STOMP WebSocket; it does not establish real broker/container interoperability
+or replace human device/visual acceptance.
