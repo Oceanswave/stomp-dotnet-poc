@@ -11,7 +11,9 @@ export default () => {
       (log) => setLogs((currLogs) => [...currLogs, log]),
       false
     );
-    return () => Unhook(window.console as any);
+    return () => {
+      Unhook(window.console as any);
+    };
   }, []);
 
   return <Console logs={logs} variant="dark" />;
